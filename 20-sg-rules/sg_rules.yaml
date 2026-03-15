@@ -1,0 +1,25 @@
+bastion:
+- name : bastion_internet #Bastion accepts traffic from anywhere
+  port: 22
+  source: internet
+  destination : bastion
+
+
+
+
+mongodb:
+- name : mongodb_bastion #Bastion accepts traffic from anywhere
+  port: 22
+  source: bastion
+  destination: mongodb
+
+
+- name : mongodb_catalogue #Mongodb accepts traffic from catalogue
+  port : 27017
+  source: catalogue
+  destination: Mongodb
+
+- name : mongodb_user #Mongodb accepts traffic from user
+  port : 27017
+  source: user
+  destination: Mongodb
