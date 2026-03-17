@@ -3,7 +3,21 @@ resource "aws_instance" "bastion" {
   instance_type = "t3.micro"
   subnet_id = local.public_subnet_id
   vpc_security_group_ids = [local.bastion_sg_id]
-  iam_instance_profile = aws_iam_instance_profile.bastion.name  
+  iam_instance_profile = aws_iam_instance_profile.bastion.name 
+  #user_data = file(bastion.sh) # we are using user_data to run the bootstrap script to update the /etc/hosts file in all the instances with the private IP address of the database instance. this is required because we are using private IP address to connect to the database instance from other instances. so whenever we launch a new instance then we need to update the /etc/hosts file in all the instances with the private IP address of the database instance. this is required because we are using private IP address to connect to the database instance from other instances. so whenever we launch a new instance then we need to update the /etc/hosts file in all the instances with the private IP address of the database instance.
+
+  root_block_device {
+    volume_size = 50
+    volume_type = "gp3"
+    delete_on_termination = true
+
+    #EBS Volume tags
+    tags = merge(
+      {
+        Name = "${var.project}-${var.environment}-bastion"
+      },local.common_tags
+    )
+  }
 
   tags = merge (
     
