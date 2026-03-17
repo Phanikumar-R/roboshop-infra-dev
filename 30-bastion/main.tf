@@ -44,7 +44,8 @@ resource "aws_iam_role" "bastion" {
 
 resource "aws_iam_role_policy_attachment" "bastion"{
   role       = aws_iam_role.bastion.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+# policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess" # we are attaching AmazonEC2FullAccess policy to bastion host because we want to use bastion host as a jump server to access other resources in the VPC and for that we need AmazonEC2FullAccess policy. in real time scenario we should create a custom policy with least privilege access and attach it to bastion host instead of attaching AmazonEC2FullAccess policy.
+    policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess" # we are attaching administrator access policy to bastion host because we want to use bastion host as a jump server to access other resources in the VPC and for that we need administrator access policy. in real time scenario we should create a custom policy with least privilege access and attach it to bastion host instead of attaching administrator access policy.
 }
 
 #create instance profile for bastion host and attach the role to it. instance profile is a container for an IAM role that you can use to pass an IAM role

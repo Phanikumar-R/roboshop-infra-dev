@@ -1,0 +1,1 @@
+# Make sure instances are not linked to multiple AZ's as best practice and until unless if there is any project requirement
