@@ -9,3 +9,8 @@ lvextend -r -L +30G /dev/mapper/RootVG-homeVol # -r is for resizing the file sys
 
 xfs_growfs /home   # This is required to grow the file system after extending the logical volume i.e 30 gb in this case
 
+yum install -y yum-utils
+
+yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+yum -y install terraform
