@@ -97,7 +97,7 @@ resource "aws_instance" "mysql" {
   instance_type = "t3.micro"
   subnet_id = local.database_subnet_id
   vpc_security_group_ids = [local.mysql_sg_id]
-  #iam_instance_profile = aws_iam_instance_profile.bastion.name  # This is not required for database instance because we are not attaching any policy to it. we are not giving access to it to access any other resource. so we are not attaching any IAM role to it. if we want to attach any IAM role to it in future then we can create a new IAM role and attach it to the instance.
+  iam_instance_profile = aws_iam_instance_profile.mysql.name  # This is not required for database instance because we are not attaching any policy to it. we are not giving access to it to access any other resource. so we are not attaching any IAM role to it. if we want to attach any IAM role to it in future then we can create a new IAM role and attach it to the instance.
 
   tags = merge (
     
