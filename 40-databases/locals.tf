@@ -18,4 +18,6 @@ locals {
 
     redis_sg_id = data.aws_ssm_parameter.redis_sg_id.value
 
+    mysql_sg_id = data.aws_ssm_parameter.mysql.value
+
 }
