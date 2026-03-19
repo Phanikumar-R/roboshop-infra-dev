@@ -8,6 +8,8 @@ locals {
     Project = var.project
     Environment = var.environment
     Terraform = "true"
+  
+
     }
 
     # public subnet id from 1a zone is used for bastion host because it is used for public facing resources and it is more available than other zones. so we are using public subnet id from 1a zone for bastion host. we are fetching it from SSM Parameter Store where we have stored the public subnet id for each environment.
@@ -21,5 +23,7 @@ locals {
     mysql_sg_id = data.aws_ssm_parameter.mysql_sg_id.value
 
     mysql_role_name = join("-", [for name in ["${var.project}", "${var.environment}","mysql"] : title(name)])
+
+    mysql_policy_name = join("", [for name in ["${var.project}", "${var.environment}","mysql"] : title(name)])
 
 }
