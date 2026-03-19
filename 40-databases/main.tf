@@ -15,7 +15,7 @@ resource "aws_instance" "mongodb" {
 }
 
 # when instance id is changed as per above snippet below resource will be triggered and it will run the bootstrap-hosts.sh script to update the /etc/hosts file in all the instances with the new private IP address of the database instance. this is required because we are using private IP address to connect to the database instance from other instances. so whenever the private IP address of the database instance is changed then we need to update the /etc/hosts file in all the instances with the new private IP address of the database instance. this is required because we are using private IP address to connect to the database instance from other instances. so whenever the private IP address of the database instance is changed then we need to update the /etc/hosts file in all the instances with the new private IP address of the database instance.
-resource "terraform_data" "bootstrap" {
+resource "terraform_data" "bootstrap-mongodb" {
   triggers_replace = [
     aws_instance.mongodb.id
     
@@ -109,7 +109,7 @@ resource "aws_instance" "mysql" {
 }
 
 # when instance id is changed as per above snippet below resource will be triggered and it will run the bootstrap-hosts.sh script to update the /etc/hosts file in all the instances with the new private IP address of the database instance. this is required because we are using private IP address to connect to the database instance from other instances. so whenever the private IP address of the database instance is changed then we need to update the /etc/hosts file in all the instances with the new private IP address of the database instance. this is required because we are using private IP address to connect to the database instance from other instances. so whenever the private IP address of the database instance is changed then we need to update the /etc/hosts file in all the instances with the new private IP address of the database instance.
-resource "terraform_data" "bootstrap" {
+resource "terraform_data" "bootstrap-mysql" {
   triggers_replace = [
     aws_instance.mysql.id
     
