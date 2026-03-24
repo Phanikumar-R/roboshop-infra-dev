@@ -138,7 +138,7 @@ resource "aws_launch_template" "catalogue" {
 
 # Creating auto scaling
 
-/* resource "aws_autoscaling_group" "catalogue" {
+ resource "aws_autoscaling_group" "catalogue" {
   name                      = "${var.project}-${var.environment}-catalogue"
   max_size                  = 10
   min_size                  = 1
@@ -156,22 +156,85 @@ resource "aws_launch_template" "catalogue" {
   vpc_zone_identifier       = [local.private_subnet_id]
   target_group_arns = [aws_lb_target_group.catalogue.arn]
 
- 
-  tag {
-    key                 = "Name"
-    value               = "${var.project}-${var.environment}-catalogue"
-    propagate_at_launch = true
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 50
+    }
+    triggers = ["launch_template"]    # here old instances will be deleted and new one's will be created
   }
 
+ 
+  dynamic "tag" {
+    for_each = merge (
+          {
+
+
+          Name = "${var.project}-${var.environment}-catalogue"
+        },
+          local.common_tags
+    )
+    content {
+
+    key                 = tag.key
+    value               = tag.value
+    propagate_at_launch = true
+      
+    }
+    
+  }
+# with in 15 minutes autoscaling should be successful in any case if it not created in 15 minutes it will be deleted
   timeouts {
     delete = "15m"
   }
 
-  tag {
-    key                 = "lorem"
-    value               = "ipsum"
-    propagate_at_launch = false
+ }
+
+# This is depends on target group
+ resource "aws_autoscaling_policy" "catalogue" {
+  autoscaling_group_name = aws_autoscaling_group.catalogue.name
+  name                   = "${var.project}-${var.environment}-catalogue"
+  policy_type = "TargetTrackingScaling"
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+
+    target_value = 70.0
   }
-} */
+  
+}
+
+resource "aws_lb_listener_rule" "catalogue" {
+  listener_arn = local.backend_alb_listener_arn
+  priority     = 10
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.catalogue.arn
+  }
+
+  condition {
+    host_header {
+      values = ["catalogue.backend-alb-${var.environment}.${var.domain_name}"]
+    }
+  }
+}
+
+
+
+resource "terraform_data" "catalogue-delete" {
+  triggers_replace = [
+    aws_instance.catalogue.id
+  ]
+  depends_on = [ aws_autoscaling_policy.catalogue ]
+
+# This will execute in bastion server
+  provisioner "local-exec" {
+    command = "aws ec2 terminate-instances ${aws_instance.catalogue.id}"
+  }
+}
+
+
 
 
