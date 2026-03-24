@@ -21,3 +21,8 @@ variable "domain_name" {
     default = "devopsskillup.online"
   
 }
+
+variable "app_version"{
+
+    default = "v3"
+}
