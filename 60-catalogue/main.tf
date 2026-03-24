@@ -195,6 +195,7 @@ resource "aws_launch_template" "catalogue" {
   autoscaling_group_name = aws_autoscaling_group.catalogue.name
   name                   = "${var.project}-${var.environment}-catalogue"
   policy_type = "TargetTrackingScaling"
+  estimated_instance_warmup = 120 # by default if we didn't specify it wil consider 300 seconds
   target_tracking_configuration {
     predefined_metric_specification {
       predefined_metric_type = "ASGAverageCPUUtilization"
