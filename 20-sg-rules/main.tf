@@ -100,3 +100,12 @@ resource "aws_security_group_rule" "catalogue_backend_alb" {
   security_group_id = local.catalogue_sg_id
 }
 
+resource "aws_security_group_rule" "frontend_alb_public" {   
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  # which segment of the network can access this rule, here we are allowing only bastion to access mongodb on port 22
+  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = local.frontend_alb_sg_id
+}
