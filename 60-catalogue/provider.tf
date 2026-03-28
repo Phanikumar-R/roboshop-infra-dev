@@ -8,7 +8,7 @@ terraform {
 
    backend "s3" {
     bucket = "remote-state-daws-88s-dev"  
-    key    = "roboshop-dev-catalogue"    # here make sure give unique name for each module
+    key    = "roboshop-dev-catalogue-info"    # here make sure give unique name for each module
     region = "us-east-1"
     encrypt = true
     use_lockfile = true 
