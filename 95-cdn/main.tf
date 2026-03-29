@@ -84,12 +84,12 @@ resource "aws_route53_record" "cdn" {
   zone_id = var.zone_id
   name    = "${var.project}-${var.environment}.${var.domain_name}"
   type    = "A"
-  
-  # CDN details
+
   alias {
-    name                   = aws_cloudfront_distribution.roboshop.domain_name
-    zone_id                = aws_cloudfront_distribution.roboshop.hosted_zone_id
+    name                   = aws_cloudfront_distribution.s3_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
     evaluate_target_health = true
   }
+
   allow_overwrite = true
 }

@@ -32,7 +32,10 @@ variable "sg_names" {
             "frontend_alb",
 
         #bastion
-            "bastion"
+            "bastion",
+        
+        #openvpn
+            "openvpn"
                 
         
         

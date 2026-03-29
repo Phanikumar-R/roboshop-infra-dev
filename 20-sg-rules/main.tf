@@ -314,3 +314,15 @@ resource "aws_security_group_rule" "frontend_frontend_alb" {
   source_security_group_id = local.frontend_alb_sg_id
   security_group_id = local.frontend_sg_id
 }
+
+#OpenVpn
+
+resource "aws_security_group_rule" "openvpn_public" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  # Where traffic is coming from
+  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = local.openvpn_sg_id
+}
