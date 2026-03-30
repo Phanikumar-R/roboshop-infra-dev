@@ -1,15 +1,11 @@
-data "aws_ami" "openvpn" {
-  most_recent      = true
-  owners           = ["679593333241"]
+# Step 1: Fetch the latest Free Tier Ubuntu AMI
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
-    values = ["OpenVPN Access Server Community Image-8fbe3379-*"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
 
   filter {
@@ -18,12 +14,32 @@ data "aws_ami" "openvpn" {
   }
 }
 
-# Fetching the public subnet ID from SSM Parameter Store to use it in the aws_instance resource for the bastion host. we should not use default public subnet id because it may change in different environments. so we are fetching it from SSM Parameter Store where we have stored the public subnet id for each environment.    
-
+# Step 2: Read subnet and security group from SSM (your existing setup)
 data "aws_ssm_parameter" "public_subnet_ids" {
   name = "/${var.project}/${var.environment}/public_subnet_ids"
 }
 
 data "aws_ssm_parameter" "openvpn_sg_id" {
   name = "/${var.project}/${var.environment}/openvpn_sg_id"
+}
+
+# Step 3: Launch EC2 instance and install OpenVPN via user_data
+resource "aws_instance" "openvpn" {
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t2.micro" # Free Tier eligible
+  subnet_id              = element(split(",", data.aws_ssm_parameter.public_subnet_ids.value), 0)
+  vpc_security_group_ids = [data.aws_ssm_parameter.openvpn_sg_id.value]
+
+  user_data = <<-EOF
+              #!/bin/bash
+              apt-get update -y
+              apt-get install -y openvpn
+              # Optional: enable OpenVPN service on boot
+              systemctl enable openvpn
+              systemctl start openvpn
+              EOF
+
+  tags = {
+    Name = "roboshop-dev-openvpn"
+  }
 }
