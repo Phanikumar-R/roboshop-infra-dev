@@ -1,4 +1,4 @@
-resource "aws_instance" "openvpn" {
+resource "aws_instance" "openvpnpractice" {
   ami           = local.ami_id
   instance_type = "t3.small"
   subnet_id = local.public_subnet_id
